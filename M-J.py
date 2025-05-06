@@ -53,32 +53,35 @@ def run_agent(M, J):
 
 if __name__ == '__main__':
     # 以下修正可能 ------------------------------------------------------------------------
-    M_min = 500e3  # 最大飽和磁化 [A/m]
-    M_max = 2500e3 # 最小飽和磁化 [A/m]
-    dM = 250e3     # 飽和磁化刻み幅 [A/m]
     T = 0
 
-    min_J = 0.5e0  # [MA/cm2]
-    max_J = 11e0   # [MA/cm2]
-    J_step = 0.5e0 # [MA/cm2]
-    J_list = list(range(int(min_J), int(max_J) + 1, int(J_step)))
+    min_M = 500e3  # 最大飽和磁化 [A/m]
+    max_M = 2500e3 # 最小飽和磁化 [A/m]
+    dM    = 250e3  # 飽和磁化刻み幅 [A/m]
+
+    min_J = 0.5e0 # [MA/cm2]
+    max_J = 11e0  # [MA/cm2]
+    dJ    = 0.5e0 # [MA/cm2]
     # 以上修正可能 ------------------------------------------------------------------------
+
+    Js = np.arange(min_J, max_J + dJ, dJ).tolist()
+    Ms = np.arange(min_M, max_M + dM, dM).tolist()
 
     print(directory)
     os.makedirs(directory, exist_ok=True)   # 結果を保存するディレクトリ
 
-    data = []  # 結果保存リスト
-
-    MJ_pairs = list(itertools.product(range(M_min, M_max + 1, dM), J_list))
 #    M = 500e3
 #    J = 11e0
 #    run_agent(M,J)
 #    exit()
 
+    data = []  # 結果保存リスト
+    MJs = list(itertools.product(Ms, Js))
+
     with ProcessPoolExecutor(max_workers=15) as executor:
         data = []
         param = {
-            executor.submit(run_agent, M, J): (M, J) for M, J in MJ_pairs
+            executor.submit(run_agent, M, J): (M, J) for M, J in MJs
         }
         total = len(param)
 
@@ -88,4 +91,4 @@ if __name__ == '__main__':
             data.append([M, J, result])
             print(f"[{i:03d}/{total}] Completed: M={M:04d}, J={J*1e-10:04.1f}e10 "+comment)
 
-    np.savetxt(directory+"/scatter data.txt", data)
+    np.savetxt(directory+"/scatter_data.txt", data)

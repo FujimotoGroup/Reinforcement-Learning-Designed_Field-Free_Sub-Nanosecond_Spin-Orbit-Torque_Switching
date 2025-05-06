@@ -9,7 +9,7 @@ import torch.nn as nn
 import torch.nn.functional as F
 import torch.optim as optim
 
-import system as s
+from . import system as s
 
 from datetime import datetime
 
