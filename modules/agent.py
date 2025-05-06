@@ -123,6 +123,7 @@ class DQNAgent:
                 "da": self.da,
                 "a_step": self.a_step
             }
+        return data
 
     def output(self, file:str = "config.toml"):
         data = self.getConfig()

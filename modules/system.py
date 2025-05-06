@@ -89,6 +89,7 @@ class System:
                 "end": self.end,
                 "dt": self.dt,
                 "steps": self.steps,
+                "m0": self.m0.tolist(),
             },
             "material": {
                 "alphaG": self.alphaG,
@@ -224,16 +225,19 @@ class ThermalSystem(System):
         self.m[self.i+1] = self.m[self.i] + self.dt/6e0 * (m1 + 2e0*m2 + 2e0*m3 + m4)
         self.i += 1
 
-    def getStability(T):
-        E_ani = (self.demag[0] - self.demag[1]) * M**2 * self.mu_0 / 2e0
-        return (E_ani * self.V)/(self.kB * T)
+    def getStability(self, T):
+        E_ani = (self.demag[0] - self.demag[1]) * self.M**2 * self.mu0 / 2e0
+        stability = np.nan
+        if T != 0:
+            stability = (E_ani * self.V)/(self.kB * T)
+        return stability
 
     def getConfig(self):
         data = super().getConfig()
         data["constants"]["kB"] = self.kB
         data["simulation"]["T"] = self.T
         data["fields"]["h_th"] = float(self.H_th)
-        data["stability"] = getStability(self.T)
+        data["material"]["thermal_stability"] = self.getStability(self.T)
         return data
 
 if __name__ == '__main__':

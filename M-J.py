@@ -44,8 +44,8 @@ def run_agent(M, J):
     sys = s.ThermalSystem(end, dt, alphaG, beta, theta, size, d_Pt, M, H_appl, H_ani, m0, T)
     agent = a.DQNAgent(episodes, record, sync_interval, sys, current, da, post_eval_time, post_penalty_factor, fluctuation_penalty_factor, directory)
 #    comment = agent.perform(echo=False,save=False)
-    comment = agent.perform(echo=False,save=True)
-#    comment = agent.perform(echo=True,save=True)
+#    comment = agent.perform(echo=False,save=True)
+    comment = agent.perform(echo=True,save=True)
     agent.save()
 
     end_judge = 2.0e-9
@@ -86,7 +86,7 @@ if __name__ == '__main__':
 #    run_agent(M,J)
 #    exit()
 
-    with ProcessPoolExecutor(max_workers=10) as executor:
+    with ProcessPoolExecutor(max_workers=16) as executor:
         data = []
         param = {
             executor.submit(run_agent, M*1e3, J*1e-10): (M, J) for M, J in MJ_pairs
