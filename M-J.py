@@ -80,7 +80,7 @@ if __name__ == '__main__':
     data = []  # 結果保存リスト
     MJs = list(itertools.product(Ms, Js))
 
-    with ProcessPoolExecutor(max_workers=10) as executor:
+    with ProcessPoolExecutor(max_workers=15) as executor:
         data = []
         param = {
             executor.submit(run_agent, M, J*1e-10): (M, J) for M, J in MJs
