@@ -14,6 +14,7 @@ from . import system as s
 from datetime import datetime
 
 import matplotlib as mpl
+mpl.use('Agg')  # 非対話型バックエンドを指定
 import matplotlib.pyplot as plt
 from matplotlib.ticker import AutoMinorLocator
 plt.rcParams.update({
@@ -23,7 +24,13 @@ mpl.rcParams['mathtext.fontset'] = 'stix'
 mpl.rcParams['lines.linewidth'] = 2.0
 mpl.rcParams["font.size"] = 20
 
-device = torch.device("cuda:0")  # NVIDIA GPU (GPU 1) を指定
+# PyTorch のデバイス自動判定（CUDA → MPS → CPU）
+if torch.cuda.is_available():
+    device = torch.device("cuda:0")
+elif getattr(torch.backends, "mps", None) and torch.backends.mps.is_available():
+    device = torch.device("mps")
+else:
+    device = torch.device("cpu")
 
 class ReplayBuffer:
     def __init__(self, buffer_size, batch_size):
@@ -274,6 +281,8 @@ class DQNAgent:
 
                 if episode > self.sync_interval:
                     self.total_loss += loss if loss is not None else 0
+
+            self.system.j[-1] = current
 
             if episode % self.sync_interval == 0:
                 self.sync_qnet()

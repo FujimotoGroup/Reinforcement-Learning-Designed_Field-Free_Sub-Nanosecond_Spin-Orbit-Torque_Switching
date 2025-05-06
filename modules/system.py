@@ -1,6 +1,7 @@
 import numpy as np
 import toml
 import matplotlib as mpl
+mpl.use('Agg')  # 非対話型バックエンドを指定
 import matplotlib.pyplot as plt
 import matplotlib.patches as mpatches
 from mpl_toolkits.mplot3d import Axes3D

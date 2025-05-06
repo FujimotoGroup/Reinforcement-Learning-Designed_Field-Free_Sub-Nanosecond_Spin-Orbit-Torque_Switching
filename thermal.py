@@ -1,8 +1,5 @@
 import toml
 import numpy as np
-import matplotlib.pyplot as plt
-plt.rcParams['mathtext.fontset'] = 'cm'
-plt.rcParams['font.size'] = 18
 import os
 import re
 import glob

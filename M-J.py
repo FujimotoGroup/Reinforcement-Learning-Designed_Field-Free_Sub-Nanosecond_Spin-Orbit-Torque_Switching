@@ -1,3 +1,4 @@
+import multiprocessing
 from concurrent.futures import ProcessPoolExecutor, as_completed
 import itertools
 
@@ -52,6 +53,7 @@ def run_agent(M, J):
     return res, comment
 
 if __name__ == '__main__':
+    multiprocessing.set_start_method('spawn')
     # 以下修正可能 ------------------------------------------------------------------------
     T = 0
 
@@ -59,29 +61,29 @@ if __name__ == '__main__':
     max_M = 2500e3 # 最小飽和磁化 [A/m]
     dM    = 250e3  # 飽和磁化刻み幅 [A/m]
 
-    min_J = 0.5e0 # [MA/cm2]
-    max_J = 11e0  # [MA/cm2]
-    dJ    = 0.5e0 # [MA/cm2]
+    min_J = 5e9   # [MA/cm2]
+    max_J = 11e10 # [MA/cm2]
+    dJ    = 5e9   # [MA/cm2]
     # 以上修正可能 ------------------------------------------------------------------------
 
-    Js = np.arange(min_J, max_J + dJ, dJ).tolist()
-    Ms = np.arange(min_M, max_M + dM, dM).tolist()
+    Ms = list(range(int(min_M), int(max_M) + int(dM), int(dM)))
+    Js = list(range(int(min_J), int(max_J) + int(dJ), int(dJ)))
 
     print(directory)
     os.makedirs(directory, exist_ok=True)   # 結果を保存するディレクトリ
 
 #    M = 500e3
-#    J = 11e0
+#    J = 5e0
 #    run_agent(M,J)
 #    exit()
 
     data = []  # 結果保存リスト
     MJs = list(itertools.product(Ms, Js))
 
-    with ProcessPoolExecutor(max_workers=15) as executor:
+    with ProcessPoolExecutor(max_workers=10) as executor:
         data = []
         param = {
-            executor.submit(run_agent, M, J): (M, J) for M, J in MJs
+            executor.submit(run_agent, M, J*1e-10): (M, J) for M, J in MJs
         }
         total = len(param)
 
