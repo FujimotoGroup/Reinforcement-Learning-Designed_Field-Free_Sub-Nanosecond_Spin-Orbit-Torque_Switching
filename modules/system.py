@@ -14,7 +14,7 @@ mpl.rcParams['lines.linewidth'] = 2.0
 mpl.rcParams["font.size"] = 20
 
 class System:
-    def __init__(self, end:np.float64, dt:np.float64, alphaG:np.float64, beta:np.float64, theta:np.float64, size:np.array, d_Pt, M:np.float64,
+    def __init__(self, end:np.float32, dt:np.float32, alphaG:np.float32, beta:np.float32, theta:np.float32, size:np.array, d_Pt, M:np.float32,
                  H_appl:np.array, H_ani:np.array, m0:np.array):
 
         self.gamma = 1.760859770e11 # [rad/s T]
@@ -44,8 +44,8 @@ class System:
         self.dt = dt*1e9 # [ns]
         self.steps = int(self.end / self.dt)  # total time step
         self.t = np.linspace(0e0, self.end, self.steps)
-        self.m = np.zeros((self.steps, 3), dtype=np.float64)
-        self.j = np.zeros(self.steps, dtype=np.float64)
+        self.m = np.zeros((self.steps, 3), dtype=np.float32)
+        self.j = np.zeros(self.steps, dtype=np.float32)
         self.steps = self.steps - 1 # 調整
 
         self.i = 0 # time counter
@@ -55,7 +55,7 @@ class System:
         for i in range(self.steps):
             self.RungeKutta(self.j[i])
 
-    def judge(self, current:np.array, rule_period:np.float64, rule_range:np.float64):
+    def judge(self, current:np.array, rule_period:np.float32, rule_range:np.float32):
         self.j[:] = 0e0
         l = min(self.steps, len(current))
         self.j[:l] = current[:l]
@@ -75,8 +75,8 @@ class System:
         self.end = end*1e9  # simulation end time [ns]
         self.steps = int(self.end / self.dt)  # total time step
         self.t = np.linspace(0e0, self.end, self.steps)
-        self.m = np.empty((self.steps, 3), dtype=np.float64)
-        self.j = np.empty(self.steps, dtype=np.float64)
+        self.m = np.empty((self.steps, 3), dtype=np.float32)
+        self.j = np.empty(self.steps, dtype=np.float32)
         self.steps = self.steps - 1 # 調整
         self.reset()
 
@@ -107,7 +107,7 @@ class System:
             "fields": {
                 "H_appl": self.H_appl.tolist(),
                 "H_ani": self.H_ani.tolist(),
-                "H_shape": self.H_shape.tolist() if isinstance(self.H_shape, np.ndarray) else np.float64(self.H_shape),
+                "H_shape": self.H_shape.tolist() if isinstance(self.H_shape, np.ndarray) else np.float32(self.H_shape),
                 "H_s": self.H_s,
                 "H_rf": self.H_rf.tolist(),
             },
@@ -151,7 +151,7 @@ class System:
 
         return np.array([Dx, Dy, Dz])  # 3次元ベクトルとして返す
 
-    def LLG(self, magnetization:np.array, current:np.float64) -> np.array:
+    def LLG(self, magnetization:np.array, current:np.float32) -> np.array:
         H_eff = self.H_appl + self.H_ani * magnetization - self.H_shape * magnetization
         H_eff += self.H_s * current * np.cross(self.e_y, magnetization) + self.beta * self.H_s * current * self.e_y
         H_eff += self.H_rf * current
@@ -159,7 +159,7 @@ class System:
         m = - self.g * mxH - self.g * self.alphaG * np.cross(magnetization, mxH)
         return m
 
-    def RungeKutta(self, current:np.float64):
+    def RungeKutta(self, current:np.float32):
         self.j[self.i] = current
         m1 = self.LLG(self.m[self.i],                  current)
         m2 = self.LLG(self.m[self.i] + self.dt*m1/2e0, current)
@@ -198,15 +198,15 @@ class System:
         plt.close()
 
 class ThermalSystem(System):
-    def __init__(self, end:np.float64, dt:np.float64, alphaG:np.float64, beta:np.float64, theta:np.float64, size:np.array, d_Pt:np.float64, M:np.float64,
-                 H_appl:np.array, H_ani:np.array, m0:np.array, T:np.float64):
+    def __init__(self, end:np.float32, dt:np.float32, alphaG:np.float32, beta:np.float32, theta:np.float32, size:np.array, d_Pt:np.float32, M:np.float32,
+                 H_appl:np.array, H_ani:np.array, m0:np.array, T:np.float32):
         super().__init__(end, dt, alphaG, beta, theta, size, d_Pt, M, H_appl, H_ani, m0)
 
         self.kB = 1.380649e-23 # [J/K]
         self.T = T # [K]
         self.H_th = np.sqrt((2e0 * self.alphaG * self.kB * self.T) / (self.M * self.gamma * self.V * (self.dt*1e-9))) # [T]
 
-    def LLB(self, magnetization:np.array, current:np.float64, H_therm) -> np.array:
+    def LLB(self, magnetization:np.array, current:np.float32, H_therm) -> np.array:
         H_eff = self.H_appl + self.H_ani * magnetization - self.H_shape * magnetization
         H_eff += self.H_s * current * np.cross(self.e_y, magnetization) + self.beta * self.H_s * current * self.e_y
         H_eff += self.H_rf * current
@@ -215,7 +215,7 @@ class ThermalSystem(System):
         m = - self.g * mxH - self.g * self.alphaG * np.cross(magnetization, mxH)
         return m
 
-    def RungeKutta(self, current:np.float64):
+    def RungeKutta(self, current:np.float32):
         self.j[self.i] = current
         H_therm = self.H_th * np.random.normal(0e0, 1e0, 3)
         m1 = self.LLB(self.m[self.i],                  current, H_therm)

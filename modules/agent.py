@@ -118,9 +118,9 @@ class QNet(nn.Module):
 
 class DQNAgent:
     def __init__(self, episodes:int, record:int, sync_interval:int,
-                 system:s.System, current:np.float64, da:np.float64,
-                 post_eval_time:np.float64 = 0.5e-9, post_penalty_factor:np.float64 = 1.0,
-                 fluctuation_penalty_factor:np.float64 = 1.0,
+                 system:s.System, current:np.float32, da:np.float32,
+                 post_eval_time:np.float32 = 0.5e-9, post_penalty_factor:np.float32 = 1.0,
+                 fluctuation_penalty_factor:np.float32 = 1.0,
                  directory:str = ""):
         """
         DQNエージェントの初期化
@@ -355,9 +355,9 @@ class DQNAgent:
 
 class ExtendedDQNAgent(DQNAgent):
     def __init__(self, episodes:int, record:int, sync_interval:int,
-                 system:s.System, current:np.float64, da:np.float64,
-                 post_eval_time:np.float64 = 0.5e-9, post_penalty_factor:np.float64 = 1.0,
-                 fluctuation_penalty_factor:np.float64 = 1.0,
+                 system:s.System, current:np.float32, da:np.float32,
+                 post_eval_time:np.float32 = 0.5e-9, post_penalty_factor:np.float32 = 1.0,
+                 fluctuation_penalty_factor:np.float32 = 1.0,
                  directory:str = ""):
         super().__init__(episodes, record, sync_interval, system, current, da,
                          post_eval_time, post_penalty_factor,
