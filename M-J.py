@@ -1,17 +1,7 @@
 from concurrent.futures import ProcessPoolExecutor, as_completed
 import itertools
 
-from copy import copy
-from collections import deque
-import random
 import numpy as np
-import torch
-import torch.nn as nn
-import torch.nn.functional as F
-import torch.optim as optim
-import matplotlib.pyplot as plt
-plt.rcParams['mathtext.fontset'] = 'cm'
-plt.rcParams['font.size'] = 18
 import os
 
 from modules import system as s
@@ -44,8 +34,8 @@ def run_agent(M, J):
     sys = s.ThermalSystem(end, dt, alphaG, beta, theta, size, d_Pt, M, H_appl, H_ani, m0, T)
     agent = a.DQNAgent(episodes, record, sync_interval, sys, current, da, post_eval_time, post_penalty_factor, fluctuation_penalty_factor, directory)
 #    comment = agent.perform(echo=False,save=False)
-#    comment = agent.perform(echo=False,save=True)
-    comment = agent.perform(echo=True,save=True)
+    comment = agent.perform(echo=False,save=True)
+#    comment = agent.perform(echo=True,save=True)
     agent.save()
 
     end_judge = 2.0e-9
@@ -63,16 +53,15 @@ def run_agent(M, J):
 
 if __name__ == '__main__':
     # 以下修正可能 ------------------------------------------------------------------------
-    M_min = 500  # 最大飽和磁化　[emu/c.c. = 10^3 A/m = 4π Oe]
-    M_max = 2500  # 最小飽和磁化　[emu/c.c.]
-    dM = 250  # 飽和磁化刻み幅　[emu/c.c.]
+    M_min = 500e3  # 最大飽和磁化 [A/m]
+    M_max = 2500e3 # 最小飽和磁化 [A/m]
+    dM = 250e3     # 飽和磁化刻み幅 [A/m]
     T = 0
 
-    min_J = 1e10
-    max_J = 11e10
-    J_step = 0.5e10
+    min_J = 0.5e0  # [MA/cm2]
+    max_J = 11e0   # [MA/cm2]
+    J_step = 0.5e0 # [MA/cm2]
     J_list = list(range(int(min_J), int(max_J) + 1, int(J_step)))
-
     # 以上修正可能 ------------------------------------------------------------------------
 
     print(directory)
@@ -86,17 +75,17 @@ if __name__ == '__main__':
 #    run_agent(M,J)
 #    exit()
 
-    with ProcessPoolExecutor(max_workers=16) as executor:
+    with ProcessPoolExecutor(max_workers=15) as executor:
         data = []
         param = {
-            executor.submit(run_agent, M*1e3, J*1e-10): (M, J) for M, J in MJ_pairs
+            executor.submit(run_agent, M, J): (M, J) for M, J in MJ_pairs
         }
         total = len(param)
 
         for i, f in enumerate(as_completed(param), 1):
             M, J = param[f]
             result, comment = f.result()
-            data.append([M*1e3, J*1e-10, result])
+            data.append([M, J, result])
             print(f"[{i:03d}/{total}] Completed: M={M:04d}, J={J*1e-10:04.1f}e10 "+comment)
 
     np.savetxt(directory+"/scatter data.txt", data)

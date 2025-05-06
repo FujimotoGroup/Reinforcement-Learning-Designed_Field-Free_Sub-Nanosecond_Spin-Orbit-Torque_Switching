@@ -183,7 +183,6 @@ class System:
         axes[1].plot(t, j, color='gold')
         axes[1].set_xlabel('Time (ns)')
         axes[1].set_ylabel('Current Density (MA/cm$^2$)')
-        axes[1].set_ylim([-0.05, 12])
 
         return fig
 
@@ -204,7 +203,7 @@ class ThermalSystem(System):
 
         self.kB = 1.380649e-23 # [J/K]
         self.T = T # [K]
-        self.H_th = np.sqrt((2e0 * self.alphaG * self.kB * self.T) / (self.M * self.gamma * self.V * self.dt)) # [T]
+        self.H_th = np.sqrt((2e0 * self.alphaG * self.kB * self.T) / (self.M * self.gamma * self.V * (self.dt*1e-9))) # [T]
 
     def LLB(self, magnetization:np.array, current:np.float64, H_therm) -> np.array:
         H_eff = self.H_appl + self.H_ani * magnetization - self.H_shape * magnetization
@@ -224,6 +223,10 @@ class ThermalSystem(System):
         m4 = self.LLB(self.m[self.i] + self.dt*m3,     current, H_therm)
         self.m[self.i+1] = self.m[self.i] + self.dt/6e0 * (m1 + 2e0*m2 + 2e0*m3 + m4)
         self.i += 1
+
+    def run(self):
+        for i in range(self.steps):
+            self.RungeKutta(self.j[i])
 
     def getStability(self, T):
         E_ani = (self.demag[0] - self.demag[1]) * self.M**2 * self.mu0 / 2e0
@@ -245,7 +248,7 @@ if __name__ == '__main__':
     T = 0 # 温度 [K]
     end = 0.8e-9  # シミュレーションの終了時間 [秒]
     dt = 1e-12  # タイムステップ [秒]
-    alphaG = 0.01  # ギルバート減衰定数
+    alphaG = 0.01e0  # ギルバート減衰定数
     beta = -3e0  # field like torque と damping like torque の比
     theta = -0.25e0  # スピンホール角
     size = np.array([100e-9, 50e-9, 1e-9]) # [m] 強磁性体の寸法
@@ -257,7 +260,7 @@ if __name__ == '__main__':
     system = ThermalSystem(end, dt, alphaG, beta, theta, size, d_Pt, M, H_appl, H_ani, m0, T)
 
     for i in range(system.steps):
-        j = 1e0 # [MA/cm2]
+        j = 10e0 # [MA/cm2]
         system.RungeKutta(j)  # 磁化の時間発展を計算
 
     label = "test"
