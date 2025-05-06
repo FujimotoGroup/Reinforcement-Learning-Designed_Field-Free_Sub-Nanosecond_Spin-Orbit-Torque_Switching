@@ -1,4 +1,5 @@
 import os
+import toml
 from copy import deepcopy
 from collections import deque
 import random
@@ -107,6 +108,26 @@ class DQNAgent:
         self.qnet = QNet(self.action_size).to(device)
         self.qnet_target = QNet(self.action_size).to(device)
         self.optimizer = optim.Adam(self.qnet.parameters(), lr=self.lr)
+
+    def getConfig(self):
+        data = self.system.getConfig()
+
+        data["hyperparameters"] = {
+                "epsilon": self.epsilon,
+                "gamma": self.gamma,
+                "lr": self.lr
+            }
+
+        data["training"] = {
+                "episodes": self.episodes,
+                "da": self.da,
+                "a_step": self.a_step
+            }
+
+    def output(self, file:str = "config.toml"):
+        data = self.getConfig()
+        with open(file, 'w') as f:
+            toml.dump(data, f)
 
     def sync_qnet(self):
         self.qnet_target.load_state_dict(self.qnet.state_dict())
@@ -223,7 +244,7 @@ class DQNAgent:
         np.savetxt(self.directory+"reward_history.txt", self.reward_history)
 
     def save(self):
-        self.system.output(self.directory+"config.toml")
+        self.output(self.directory+"config.toml")
         self.system.m = self.best_m
         self.system.j = self.best_j
         np.savetxt(self.directory+"t.txt", self.system.t)

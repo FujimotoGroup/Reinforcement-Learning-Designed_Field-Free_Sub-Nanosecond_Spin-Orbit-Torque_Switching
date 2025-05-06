@@ -233,6 +233,7 @@ class ThermalSystem(System):
         data["constants"]["kB"] = self.kB
         data["simulation"]["T"] = self.T
         data["fields"]["h_th"] = float(self.H_th)
+        data["stability"] = getStability(self.T)
         return data
 
 if __name__ == '__main__':
@@ -254,5 +255,7 @@ if __name__ == '__main__':
     for i in range(system.steps):
         j = 1e0 # [MA/cm2]
         system.RungeKutta(j)  # 磁化の時間発展を計算
-    system.save_episode(0, "./")
+
+    label = "test"
+    system.save_episode(label, "./")
     system.output()
