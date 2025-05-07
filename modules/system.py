@@ -195,7 +195,7 @@ class System:
         fig = self.plot()
         fig.tight_layout()
         fig.savefig(directory+label+".png", dpi=200)
-        plt.close()
+        plt.close(fig)
 
 class ThermalSystem(System):
     def __init__(self, end:np.float64, dt:np.float64, alphaG:np.float64, beta:np.float64, theta:np.float64, size:np.array, d_Pt:np.float64, M:np.float64,
