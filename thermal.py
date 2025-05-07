@@ -8,8 +8,8 @@ import glob
 
 from modules import system as s
 
-#load_directory = "./data/100x50x1/aG0.010/M750/J06.0e10_T0/"
-load_directory = "./data/100x50x1/aG0.010/M750/J10.0e10_T0/"
+load_directory = "./data/100x50x1/aG0.010/M750/J05.0e10_T0/"
+#load_directory = "./data/100x50x1/aG0.010/M750/J10.0e10_T0/"
 
 T = 300 # [K]
 end = 2.0e-9 # シミュレーションの終了時間 [秒]
