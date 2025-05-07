@@ -76,7 +76,7 @@ def main():
     l = range(1, n+1)
 
     # シミュレーション実行
-    with ProcessPoolExecutor(max_workers=num_worker) as executor:
+    with ProcessPoolExecutor(max_workers=num_workers) as executor:
         results = list(executor.map(partial(LLG, config=config, j=j), l))
 
 if __name__ == '__main__':
