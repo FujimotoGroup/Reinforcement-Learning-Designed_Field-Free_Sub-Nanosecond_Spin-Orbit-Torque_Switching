@@ -62,7 +62,7 @@ def main():
 
     # シミュレーション実行
     with ThreadPoolExecutor(max_workers=25) as executor:
-        results = list(executor.map(task, l))
+        results = list(executor.map(LLG, l))
 
 if __name__ == '__main__':
     main()
