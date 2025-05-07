@@ -23,7 +23,7 @@ def main():
     save_dir = "./output/"
     os.makedirs(save_dir, exist_ok=True)   # 結果を保存するディレクトリ
 
-    load_dir = "../data/100x50x1/aG0.010/M750/J03.0e10_T0/"
+    load_dir = "../../data/100x50x1/aG0.010/M750/J03.0e10_T0/"
     config, t, m, j = common.load(load_dir)
 
     t_ticks = [0, 0.2, 0.4, 0.6, 0.8]

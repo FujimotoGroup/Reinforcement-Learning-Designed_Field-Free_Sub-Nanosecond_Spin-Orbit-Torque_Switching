@@ -26,7 +26,7 @@ record = 10  # 結果の記録間隔
 sync_interval = 20  #　ターゲットネットワークを同期する間隔
 da = 20e-12  # 行動間隔 [秒]
 
-directory = f"./data/{size[0]*1e9:.0f}x{size[1]*1e9:.0f}x{size[2]*1e9:.0f}/aG{alphaG:.3f}/"   # 結果を保存するディレクトリ名
+directory = f"../data/{size[0]*1e9:.0f}x{size[1]*1e9:.0f}x{size[2]*1e9:.0f}/aG{alphaG:.3f}/"   # 結果を保存するディレクトリ名
 
 def run_agent(M, J):
     post_eval_time = 0.5e-9

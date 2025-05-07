@@ -70,7 +70,7 @@ def main():
     lss = ['-', ':', '-.']
 
     for i, current in enumerate(currents):
-        load_dir = "../data/thermal/M750/J"+current+"e10_T300/"
+        load_dir = "../../data/thermal/M750/J"+current+"e10_T300/"
 
         t, m, j = load(load_dir)
 

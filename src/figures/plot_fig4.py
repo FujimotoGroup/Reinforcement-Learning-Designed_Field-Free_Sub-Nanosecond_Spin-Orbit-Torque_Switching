@@ -104,7 +104,7 @@ def plot_each_case(directory): # {{{
     plt.close()
 # }}}
 
-def plot_phase_map(load_dir): # {{{
+def plot_phase_map(load_dir, ylim): # {{{
     save_dir = "./output/"
     os.makedirs(save_dir, exist_ok=True)
 
@@ -118,11 +118,11 @@ def plot_phase_map(load_dir): # {{{
     success = r > 0
     failure = r == 0
 
-    j_ticks = [0, 5, 10]
+    j_ticks = np.arange(ylim[0], ylim[1], 5)
 
     fig, ax = plt.subplots(1,1,figsize=(10, 7))
     plt.subplots_adjust(top=0.95, bottom=0.12, left=0.1, right=0.98)
-    ax.set_ylim([0.1, 11.5])
+    ax.set_ylim(ylim)
     ax.set_yticks(j_ticks)
     ax.xaxis.set_minor_locator(AutoMinorLocator())
     ax.yaxis.set_minor_locator(AutoMinorLocator())
@@ -155,7 +155,7 @@ def plot_phase_map(load_dir): # {{{
     plt.close()
 # }}}
 
-def make_anime(path): # {{{
+def make_anime(path, ymax): # {{{
     save_dir = "./output/"
     os.makedirs(save_dir, exist_ok=True)
 
@@ -180,6 +180,7 @@ def make_anime(path): # {{{
 
     t_ticks = [0, 0.2, 0.4, 0.6, 0.8]
     m_ticks = [-1, -0.5, 0, 0.5, 1]
+    j_ticks = np.arange(0, ymax, 5)
 
     fig, axes = plt.subplots(1,3,figsize=(18, 7))
     plt.subplots_adjust(top=0.92, bottom=0.12, left=0.03, right=0.97, wspace=0.2)
@@ -209,7 +210,7 @@ def make_anime(path): # {{{
     axes[2].set_title("$j_e~(\mathrm{MA/cm^2})$")
     axes[2].set_xlim([-0.01,0.5])
     axes[2].set_xticks(t_ticks)
-    axes[2].set_ylim([-0.1,12])
+    axes[2].set_ylim([-0.1,ymax])
     axes[2].xaxis.set_minor_locator(AutoMinorLocator())
     axes[2].yaxis.set_minor_locator(AutoMinorLocator())
     axes[2].tick_params(labelbottom=False)
@@ -257,10 +258,14 @@ def make_anime(path): # {{{
 # }}}
 
 def main():
-    load_dir = "../data/100x50x1/aG0.010/"
-    plot_phase_map(load_dir)
+    load_dir = "../../data/100x50x1/aG0.010/"
+    ylim = [0, 11.5]
+#    load_dir = "../../data/80x25x1/aG0.010/"
+#    ylim = [0, 21]
 
-    path = load(load_dir)
+    plot_phase_map(load_dir, ylim)
+
+    path = load(load_dir, ylim[1])
     make_anime(path)
 
 if __name__ == '__main__':

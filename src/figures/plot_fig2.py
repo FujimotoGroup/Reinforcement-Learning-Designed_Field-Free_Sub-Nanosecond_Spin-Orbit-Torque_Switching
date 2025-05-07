@@ -26,7 +26,7 @@ def main():
     pickup_episodes = [20, 200, 730]
     n = len(pickup_episodes) + 1
 
-    load_dir = "../data/100x50x1/aG0.010/M750/J03.0e10_T0/"
+    load_dir = "../../data/100x50x1/aG0.010/M750/J03.0e10_T0/"
 
     config = toml.load(load_dir+"config.toml")
     dt = config["simulation"]["dt"]
