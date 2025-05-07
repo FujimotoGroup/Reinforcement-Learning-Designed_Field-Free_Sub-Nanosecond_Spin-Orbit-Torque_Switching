@@ -1,3 +1,4 @@
+from concurrent.futures import ThreadPoolExecutor
 import toml
 import numpy as np
 import os
@@ -44,13 +45,11 @@ def main():
     os.makedirs(save_dir, exist_ok=True)   # 結果を保存するディレクトリ
 
     system = s.ThermalSystem(end, dt, alphaG, beta, theta, size, d_Pt, M, H_appl, H_ani, m0, T)
-    system.j = j
     system.output(save_dir+"config.toml")
 
-    # シミュレーション実行
-    for n in range(1, 1001):
-        print(n)
-        system.reset()
+    def LLG(n):
+        system = s.ThermalSystem(end, dt, alphaG, beta, theta, size, d_Pt, M, H_appl, H_ani, m0, T)
+        system.j = j
 
         system.run()
 
@@ -58,6 +57,12 @@ def main():
         label = f"{n:03d}"
         system.save_episode(label, save_dir)
         np.savetxt(save_dir+label+".txt", system.m)
+
+    l = range(1, 1001)
+
+    # シミュレーション実行
+    with ThreadPoolExecutor(max_workers=25) as executor:
+        results = list(executor.map(task, l))
 
 if __name__ == '__main__':
     main()
