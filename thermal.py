@@ -59,6 +59,8 @@ def LLG(i, config, j):
 
     if i == 1:
         system.output(save_dir+"config.toml")
+        np.savetxt(save_dir+"t.txt", system.t)
+        np.savetxt(save_dir+"j.txt", system.j)
 
     system.run()
 
