@@ -1,4 +1,5 @@
-from concurrent.futures import ThreadPoolExecutor
+from functools import partial
+from concurrent.futures import ProcessPoolExecutor
 import toml
 import numpy as np
 import os
@@ -7,13 +8,17 @@ import glob
 
 from modules import system as s
 
-load_directory = "./data/100x50x1/aG0.010/M750/J06.0e10_T0/"
+#load_directory = "./data/100x50x1/aG0.010/M750/J06.0e10_T0/"
+load_directory = "./data/100x50x1/aG0.010/M750/J10.0e10_T0/"
 
-def main():
+T = 300 # [K]
+end = 2.0e-9 # シミュレーションの終了時間 [秒]
+root_save_dir = "./data/thermal/"
+
+num_workers = os.cpu_count()
+
+def load(load_directory):
     print(load_directory)
-
-    T = 300 # [K]
-    root_save_dir = "./data/thermal/"
 
     # load files
     config = toml.load(load_directory+"config.toml")
@@ -21,8 +26,15 @@ def main():
         content = file.read()
     j_read = [float(val) for val in re.findall(r'-?\d+\.\d+e[+-]?\d+', content)]
 
+    dt = config["simulation"]["dt"]*1e-9 # タイムステップ [秒]
+    steps = int(end / dt)  # ステップ数
+    j = np.zeros(steps, dtype=np.float64)
+    j[:len(j_read)] = j_read
+
+    return config, j
+
+def LLG(i, config, j):
     # シミュレーション設定
-    end = 2.0e-9 # シミュレーションの終了時間 [秒]
     dt = config["simulation"]["dt"]*1e-9 # タイムステップ [秒]
     steps = int(end / dt)  # ステップ数
     alphaG = config["material"]["alphaG"]  # ギルバート減衰定数
@@ -35,8 +47,6 @@ def main():
     H_appl = np.array(config["fields"]["H_appl"]) # 外部磁場 [T]
     H_ani = np.array(config["fields"]["H_ani"]) # 異方性定数 [T]
     H_shape =np.array(config["fields"]["H_shape"]) # 反磁場 [T]
-    j = np.zeros(steps, dtype=np.float64)
-    j[:len(j_read)] = j_read
 
     m0 = np.array(config["simulation"]["m0"])  # 初期磁化
     current = config["simulation"]["current"] # 印加電流密度
@@ -45,24 +55,29 @@ def main():
     os.makedirs(save_dir, exist_ok=True)   # 結果を保存するディレクトリ
 
     system = s.ThermalSystem(end, dt, alphaG, beta, theta, size, d_Pt, M, H_appl, H_ani, m0, T)
-    system.output(save_dir+"config.toml")
+    system.j = j
 
-    def LLG(n):
-        system = s.ThermalSystem(end, dt, alphaG, beta, theta, size, d_Pt, M, H_appl, H_ani, m0, T)
-        system.j = j
+    if i == 1:
+        system.output(save_dir+"config.toml")
 
-        system.run()
+    system.run()
 
-        # 結果を保存
-        label = f"{n:03d}"
-        system.save_episode(label, save_dir)
-        np.savetxt(save_dir+label+".txt", system.m)
+    # 結果を保存
+    label = f"{i:03d}"
+    system.save_episode(label, save_dir)
+    np.savetxt(save_dir+label+".txt", system.m)
 
-    l = range(1, 1001)
+    print(f"[{i:04d}] Completed")
+
+def main():
+    config, j = load(load_directory)
+
+    n = 1000
+    l = range(1, n+1)
 
     # シミュレーション実行
-    with ThreadPoolExecutor(max_workers=25) as executor:
-        results = list(executor.map(LLG, l))
+    with ProcessPoolExecutor(max_workers=num_worker) as executor:
+        results = list(executor.map(partial(LLG, config=config, j=j), l))
 
 if __name__ == '__main__':
     main()

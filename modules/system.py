@@ -174,16 +174,16 @@ class System:
         j = np.concatenate(([0e0], self.j))
         fig, axes = plt.subplots(1, 2, figsize=(12, 6))
         axes[0].set_ylim([-1e0,1e0])
-        axes[0].plot(t, m[:,0], label='$m_x$')
-        axes[0].plot(t, m[:,1], label='$m_y$')
-        axes[0].plot(t, m[:,2], label='$m_z$')
+        axes[0].plot(t, m[:,0], label=r"$m_x$")
+        axes[0].plot(t, m[:,1], label=r"$m_y$")
+        axes[0].plot(t, m[:,2], label=r"$m_z$")
         axes[0].set_xlabel('Time (ns)')
         axes[0].set_ylabel('Magnetization')
         axes[0].legend()
 
         axes[1].plot(t, j, color='gold')
         axes[1].set_xlabel('Time (ns)')
-        axes[1].set_ylabel('Current Density (MA/cm$^2$)')
+        axes[1].set_ylabel(r"Current Density (MA/cm$^2$)")
 
         return fig
 
@@ -193,7 +193,7 @@ class System:
 
     def save_episode(self, label:str, directory:str):
         fig = self.plot()
-        fig.tight_layout()
+#        fig.tight_layout()
         fig.savefig(directory+label+".png", dpi=200)
         plt.close(fig)
 
