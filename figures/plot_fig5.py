@@ -123,7 +123,6 @@ def main():
 
             for l, selected in enumerate(selection):
                 ax_m.plot(t, m[selected][:,k], label=label, color=color, ls=ls)
-#                ax_m.plot(t, m[selected][:,k], label=label, color=colors[l])
 
         if i > 0:
             ax_j.set_ylabel("")
@@ -140,7 +139,7 @@ def main():
                 xy=(t[t_x], -0.95),
                 xytext=(t[t_x], -0.75),
                 arrowprops=dict(
-                    arrowstyle='->',                    # ← 矢印ヘッドなし！ただの線
+                    arrowstyle='->',
                     color='tab:red',
                     lw=1,
                     mutation_scale=10
@@ -154,7 +153,7 @@ def main():
                 xy=(t[t_y], 0.45),
                 xytext=(t[t_y], 0.75),
                 arrowprops=dict(
-                    arrowstyle='->',                    # ← 矢印ヘッドなし！ただの線
+                    arrowstyle='->',
                     color='tab:blue',
                     lw=1,
                     mutation_scale=10
@@ -168,7 +167,7 @@ def main():
                 xy=(t[t_z], 0.02),
                 xytext=(t[t_z], -0.6),
                 arrowprops=dict(
-                    arrowstyle='->',                    # ← 矢印ヘッドなし！ただの線
+                    arrowstyle='->',
                     color='tab:green',
                     lw=1,
                     mutation_scale=10
@@ -176,9 +175,6 @@ def main():
                 ha='center',
                 color="tab:green"
             )
-
-
-#        ax_m.text(0.1, 0.05, f"{episode}th", transform=ax_m.transAxes)
 
 #    plt.show()
     plt.savefig(save_dir+"fig5.pdf")
