@@ -6,7 +6,7 @@ import glob
 
 from modules import system as s
 
-load_directory = "./data/100x50x1/aG0.010/M500/J01.0e10_T0/"
+load_directory = "./data/100x50x1/aG0.010/M750/J06.0e10_T0/"
 
 def main():
     print(load_directory)
@@ -15,8 +15,8 @@ def main():
     root_save_dir = "./data/thermal/"
 
     # load files
-    config = toml.load(directory+"config.toml")
-    with open(directory+'/j_best.txt', 'r') as file:
+    config = toml.load(load_directory+"config.toml")
+    with open(load_directory+'/j_best.txt', 'r') as file:
         content = file.read()
     j_read = [float(val) for val in re.findall(r'-?\d+\.\d+e[+-]?\d+', content)]
 

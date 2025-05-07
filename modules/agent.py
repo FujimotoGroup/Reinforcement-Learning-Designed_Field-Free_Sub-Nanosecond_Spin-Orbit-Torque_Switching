@@ -54,11 +54,11 @@ class ReplayBuffer:
         - done (bool): エピソード終了フラグ
         """
         data = (
-            torch.tensor(state, dtype=torch.float64, device=device),
-            torch.tensor(action, dtype=torch.int64, device=device),
-            torch.tensor(reward, dtype=torch.float64, device=device),
-            torch.tensor(next_state, dtype=torch.float64, device=device),
-            torch.tensor(done, dtype=torch.float64, device=device)
+            torch.tensor(state, dtype=torch.float32, device=device),
+            torch.tensor(action, dtype=torch.int32, device=device),
+            torch.tensor(reward, dtype=torch.float32, device=device),
+            torch.tensor(next_state, dtype=torch.float32, device=device),
+            torch.tensor(done, dtype=torch.float32, device=device)
         )
         self.buffer.append(data)  # 新しい経験をバッファに追加
 
@@ -82,10 +82,10 @@ class ReplayBuffer:
         state, action, reward, next_state, done = zip(*data)
         return (
             torch.stack(state),
-            torch.tensor(action, dtype=torch.int64, device=device),
-            torch.tensor(reward, dtype=torch.float64, device=device),
+            torch.tensor(action, dtype=torch.int32, device=device),
+            torch.tensor(reward, dtype=torch.float32, device=device),
             torch.stack(next_state),
-            torch.tensor(done, dtype=torch.float64, device=device),
+            torch.tensor(done, dtype=torch.float32, device=device),
         )
 
 class QNet(nn.Module):
