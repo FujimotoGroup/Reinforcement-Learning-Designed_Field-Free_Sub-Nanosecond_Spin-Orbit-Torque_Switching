@@ -1,7 +1,8 @@
 ## 注意
-計算結果のデータが10万ファイルくらいあるので普通にcloneすると大変なことになるので以下の手順でcloneする．
+計算結果のデータが10万ファイルくらいある．
+普通にcloneすると大変なことになるので以下の手順でcloneする．
 
-1. リポジトリをclone（履歴は取るがファイルはチェックアウトしない）
+1. リポジトリをclone（履歴は取るがファイルは一旦チェックアウトしない）
 ```bash
 git clone --filter=blob:none --no-checkout git@github.com:FujimotoGroup/Reinforcement-Learning-Designed_Field-Free_Sub-Nanosecond_Spin-Orbit-Torque_Switching.git
 cd Reinforcement-Learning-Designed_Field-Free_Sub-Nanosecond_Spin-Orbit-Torque_Switching/
