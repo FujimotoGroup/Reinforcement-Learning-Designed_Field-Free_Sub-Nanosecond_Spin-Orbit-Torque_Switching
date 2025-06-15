@@ -11,11 +11,11 @@ from modules import agent  as a
 T = 0 # 温度 [K]
 end = 0.8e-9  # シミュレーションの終了時間 [秒]
 dt = 1e-12  # タイムステップ [秒]
-alphaG = 0.01  # ギルバート減衰定数
+alphaG = 0.015  # ギルバート減衰定数
 beta = -3  # field like torque と damping like torque の比
 theta = -0.25  # スピンホール角
-#size = np.array([100e-9, 50e-9, 1e-9]) # [m] 強磁性体の寸法
-size = np.array([80e-9, 25e-9, 1e-9]) # [m] 強磁性体の寸法
+size = np.array([100e-9, 50e-9, 1e-9]) # [m] 強磁性体の寸法
+#size = np.array([80e-9, 25e-9, 1e-9]) # [m] 強磁性体の寸法
 d_Pt = 5.0e-9  # Ptの厚み [m]
 H_appl = np.array([0e0, 0e0, 0e0]) # 外部磁場 [T]
 H_ani = np.array([0e0, 0e0, 0e0])  # 異方性定数 [T]
@@ -66,9 +66,13 @@ if __name__ == '__main__':
 #    max_J = 11e10 # [MA/cm2]
 #    dJ    = 5e9   # [MA/cm2]
 
-    min_J =  2e10   # [MA/cm2]
-    max_J = 20e10 # [MA/cm2]
-    dJ    =  2e10   # [MA/cm2]
+    min_J = 12e10  # [MA/cm2]
+    max_J = 25e10 # [MA/cm2]
+    dJ    = 1e10  # [MA/cm2]
+
+#    min_J =  2e10 # [MA/cm2]
+#    max_J = 20e10 # [MA/cm2]
+#    dJ    =  2e10 # [MA/cm2]
     # 以上修正可能 ------------------------------------------------------------------------
 
     Ms = list(range(int(min_M), int(max_M) + int(dM), int(dM)))
