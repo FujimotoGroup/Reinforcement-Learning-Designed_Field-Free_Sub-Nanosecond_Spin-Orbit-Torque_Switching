@@ -23,9 +23,9 @@ def main():
     save_dir = "./output/"
     os.makedirs(save_dir, exist_ok=True)
 
-    load_dir = "../../data/100x50x1/aG0.010/M750/J03.0e10_T0/"
-    j_ticks = [0, 1, 2, 3]
-    pickup_episodes = [20, 200, 730]
+    load_dir = "../../data/100x50x1/aG0.015/M1000/J08.0e10_T0/"
+    j_ticks = [0, 4, 8]
+    pickup_episodes = [10, 200, 500]
 
     n = len(pickup_episodes) + 1
 
@@ -67,7 +67,7 @@ def main():
 
     t_ticks = [0, 0.2, 0.4, 0.6, 0.8]
 
-    fig = plt.figure(figsize=(9, 6))
+    fig = plt.figure(figsize=(9, 9))
     gs = gridspec.GridSpec(n, 3, figure=fig, width_ratios=[1.8, 1, 1], wspace=0.2, hspace=0.2, left=0.02, right=0.98, top=0.93, bottom=0.12)
 
     ax_history = fig.add_subplot(gs[0:n, 0])
@@ -120,8 +120,9 @@ def main():
         ax_m.plot(t, m[i][:,0], label="$m_x$", ls='-', color='tab:red')
         ax_m.plot(t, m[i][:,1], label="$m_y$", ls=':', color='tab:blue')
         ax_m.plot(t, m[i][:,2], label="$m_z$", ls='-.', color='tab:green')
-        position_x = 0.63 if i >= 2 else 0.01
-        ax_m.text(position_x, 0.05, f"{episode}th", transform=ax_m.transAxes)
+        position_x = 0.61 if i >= 2 else 0.01
+        position_y = 0.10 if i == 2 else 0.03
+        ax_m.text(position_x, position_y, f"{episode}th", transform=ax_m.transAxes)
         ax_j = fig.add_subplot(gs[i, 2])
         ax_j.set_xlim([-0.01,0.5])
         ax_j.set_xticks(t_ticks)
@@ -133,11 +134,11 @@ def main():
         if i == 0:
             ax_m.set_title(r"$\boldsymbol{m}$")
             ax_j.set_title("$j_e~(\mathrm{MA/cm^2})$")
-            t_x = 200
+            t_x = 50
             ax_m.annotate(
                 "$m_x$",
                 xy=(t[t_x], m[i][t_x,0]),
-                xytext=(t[t_x+80], m[i][t_x,0]-0.1),
+                xytext=(t[t_x+70], m[i][t_x,0]-0.15),
                 arrowprops=dict(
                     arrowstyle='->',
                     color='tab:red',
@@ -161,11 +162,11 @@ def main():
                 ha='center',
                 color="tab:blue"
             )
-            t_z = 350
+            t_z = 370
             ax_m.annotate(
                 "$m_z$",
                 xy=(t[t_z], m[i][t_z,2]),
-                xytext=(t[t_z], m[i][t_z,2]-0.8),
+                xytext=(t[t_z], m[i][t_z,2]-0.6),
                 arrowprops=dict(
                     arrowstyle='->',
                     color='tab:green',
@@ -206,8 +207,8 @@ def main():
 
 #    fig.tight_layout()
 #    plt.show()
-    plt.savefig(save_dir+"fig2.pdf")
-#    plt.savefig(save_dir+"fig2.png")
+    plt.savefig(save_dir+"PRB_fig1.pdf")
+#    plt.savefig(save_dir+"PRB_fig1.png")
     plt.close()
 
 if __name__ == '__main__':

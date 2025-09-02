@@ -23,6 +23,8 @@ mpl.rcParams['lines.linewidth'] = 2.0
 mpl.rcParams["font.size"] = 24
 #plt.rc('text.latex', preamble=r'\usepackage{bm}')
 
+colors =['k', 'b', 'g', 'r', 'tab:blue', 'tab:orange', 'tab:green', 'tab:red', 'tab:purple', 'tab:brown', 'tab:pink', 'tab:gray', 'tab:olive', 'tab:cyan', 'navy', 'indigo']
+
 def load(directory): # {{{
     def extract_mj_key(path):
         m_match = re.search(r"M(\d+)", path)
@@ -104,20 +106,11 @@ def plot_each_case(directory): # {{{
     plt.close()
 # }}}
 
-def plot_phase_map(load_dir, ylim): # {{{
+def plot_phase_map(): # {{{
     save_dir = "./output/"
     os.makedirs(save_dir, exist_ok=True)
 
-    data = np.loadtxt(load_dir+"scatter_data.txt")
-
-    M = data[:, 0]*1e-3
-    j = data[:, 1]*1e-10
-    r = data[:, 2]
-
-    select = (M == 750) & (j == 3e0)
-    success = r > 0
-    failure = r == 0
-
+    ylim = [0, 22]
     j_ticks = np.arange(ylim[0], ylim[1], 5)
 
     fig, ax = plt.subplots(1,1,figsize=(10, 7))
@@ -128,21 +121,34 @@ def plot_phase_map(load_dir, ylim): # {{{
     ax.yaxis.set_minor_locator(AutoMinorLocator())
     ax.set_xlabel("$M_{\mathrm{s}}~(\mathrm{kA/m}$)")
     ax.set_ylabel("$j_e$ (MA/cm$^2$)")
-    ax.scatter(
-        M[success], j[success],
-        c='tab:blue', marker='o', label='Success',
-        edgecolors='k', linewidths=0.5, s=90
-    )
-    ax.scatter(
-        M[failure], j[failure],
-        c='tab:red', marker='x', label='Failure',
-        linewidths=1.2, s=90
-    )
-    ax.scatter(
-        M[select], j[select],
-        c='yellow', marker='*',
-        edgecolors='k', linewidths=0.5, s=120
-    )
+
+    alphaGs = ["0.010", "0.015", "0.020", "0.100"]
+
+    for i, alphaG in enumerate(alphaGs):
+        load_dir = "../../data/100x50x1/aG"+alphaG+"/"
+        data = np.loadtxt(load_dir+"scatter_data.txt")
+
+        M = data[:, 0]*1e-3
+        j = data[:, 1]*1e-10
+        r = data[:, 2]
+
+        select = (M == 750) & (j == 3e0)
+        success = r > 0
+        failure = r == 0
+
+        boundary = []
+        for m_val in np.unique(M):
+            mask = M == m_val
+            if np.any(success & mask) and np.any(failure & mask):
+                j_succ_min = j[success & mask].min()
+                j_fail_max = j[failure & mask].max()
+                j_th = 0.5 * (j_succ_min + j_fail_max)
+                boundary.append([m_val, j_th])
+
+        boundary = np.array(boundary)
+
+        ax.plot(boundary[:,0], boundary[:,1], c=colors[i], lw=2, label=alphaG)
+
     legend = ax.legend(title="", loc='lower right', frameon=True, handletextpad=0, borderaxespad=0.4, borderpad=0.4)
     legend.get_frame().set_alpha(0.95)
     ax.grid(True)
@@ -150,7 +156,7 @@ def plot_phase_map(load_dir, ylim): # {{{
     ax.text(0.9, 1.01, r"$T = 0$", transform=ax.transAxes)
 
 #    plt.show()
-    plt.savefig(save_dir+"fig4.pdf", format='pdf')
+    plt.savefig(save_dir+"PRB_fig4.pdf", format='pdf')
 #    plt.savefig("fig4.png")
     plt.close()
 # }}}
@@ -267,10 +273,11 @@ def main():
     load_dir = "../../data/100x50x1/aG0.015/"
     ylim = [0, 22]
 
-    plot_phase_map(load_dir, ylim)
+    plot_phase_map()
 
     path = load(load_dir)
-    make_anime(path, ylim[1])
+#    make_anime(path, ylim[1])
 
 if __name__ == '__main__':
     main()
+
