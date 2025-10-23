@@ -24,7 +24,7 @@ m0 = np.array([1e0, 0e0, 0e0])     # 初期磁化
 episodes = 1000  # エピソード数
 record = 10  # 結果の記録間隔
 sync_interval = 20  #　ターゲットネットワークを同期する間隔
-da = 20e-12  # 行動間隔 [秒]
+da = 50e-12  # 行動間隔 [秒]
 
 directory = f"../data_extended/{size[0]*1e9:.0f}x{size[1]*1e9:.0f}x{size[2]*1e9:.0f}/aG{alphaG:.3f}/"   # 結果を保存するディレクトリ名
 
@@ -34,7 +34,7 @@ def run_agent(M, J):
     fluctuation_penalty_factor = 1e0
     current = J
     sys = s.ThermalSystem(end, dt, alphaG, beta, theta, size, d_Pt, M, H_appl, H_ani, m0, T)
-    agent = a.DQNAgent(episodes, record, sync_interval, sys, current, da, post_eval_time, post_penalty_factor, fluctuation_penalty_factor, directory)
+    agent = a.ExtendedDQNAgent(episodes, record, sync_interval, sys, current, da, post_eval_time, post_penalty_factor, fluctuation_penalty_factor, directory)
 #    comment = agent.perform(echo=False,save=False)
     comment = agent.perform(echo=False,save=True)
 #    comment = agent.perform(echo=True,save=True)
@@ -58,21 +58,13 @@ if __name__ == '__main__':
     # 以下修正可能 ------------------------------------------------------------------------
     T = 0
 
-    min_M = 500e3  # 最大飽和磁化 [A/m]
-    max_M = 2500e3 # 最小飽和磁化 [A/m]
-    dM    = 250e3  # 飽和磁化刻み幅 [A/m]
+    min_M =  750e3  # 最大飽和磁化 [A/m]
+    max_M = 1500e3  # 最小飽和磁化 [A/m]
+    dM    =  250e3  # 飽和磁化刻み幅 [A/m]
 
-#    min_J = 5e9   # [MA/cm2]
-#    max_J = 11e10 # [MA/cm2]
-#    dJ    = 5e9   # [MA/cm2]
-
-    min_J = 12e10  # [MA/cm2]
-    max_J = 25e10 # [MA/cm2]
-    dJ    = 1e10  # [MA/cm2]
-
-#    min_J =  2e10 # [MA/cm2]
-#    max_J = 20e10 # [MA/cm2]
-#    dJ    =  2e10 # [MA/cm2]
+    min_J = 1e10  # [A/m2]
+    max_J = 1e11  # [A/m2]
+    dJ    = 1e10  # [A/m2]
 
     # 以上修正可能 ------------------------------------------------------------------------
 

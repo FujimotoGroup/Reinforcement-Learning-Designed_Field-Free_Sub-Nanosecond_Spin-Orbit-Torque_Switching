@@ -396,13 +396,14 @@ class ThermalSystem(System):
 
 if __name__ == '__main__':
     # シミュレーション設定
-    T = 0 # 温度 [K]
+    T = 300 # 温度 [K]
     end = 2.0e-9  # シミュレーションの終了時間 [秒]
     dt = 1e-12  # タイムステップ [秒]
     alphaG = 0.015e0  # ギルバート減衰定数
     beta = -3e0  # field like torque と damping like torque の比
     theta = -0.25e0  # スピンホール角
     size = np.array([100e-9, 50e-9, 1e-9]) # [m] 強磁性体の寸法
+#    size = np.array([80e-9, 20e-9, 1e-9]) # [m] 強磁性体の寸法
 #    j0 = 2.64789e0 # alphaG = 0.01
 #    j0 = 3e0 # alphaG = 0.01
 #    j0 = 2.405e0 # alphaG = 0
@@ -411,7 +412,9 @@ if __name__ == '__main__':
 #    j0 = 6.35e0
 #    j0 = 7e0
     d_Pt = 5.0e-9  # Ptの厚み [m]
-    M = 750e3  # 飽和磁化　[A/m]
+#    M = 750e3  # 飽和磁化　[A/m]
+    M = 1500e3  # 飽和磁化　[A/m]
+
     H_appl = np.array([0e0, 0e0, 0e0])  # 外部磁場 [T]
     H_ani = np.array([0e0, 0e0, 0e0])  # 異方性定数 [T]
     m0 = np.array([1e0, 0e0, 0e0])  # 初期磁化
