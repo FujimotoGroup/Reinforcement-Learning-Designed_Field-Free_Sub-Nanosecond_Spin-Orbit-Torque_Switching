@@ -327,7 +327,9 @@ class System:
                 axes[1].axvspan(start*self.dt, i*self.dt, color='yellow', alpha=0.3)
                 in_block = False
 
+        energy = - self.mu0*self.M*np.dot(self.m, self.H_shape)
         axes[1].plot(self.t, self.energy(), color='black')
+        axes[1].plot(self.t, energy, color='pink')
         axes[1].set_xlabel('Time (ns)')
         axes[1].set_ylabel("Energy")
 
@@ -396,10 +398,10 @@ class ThermalSystem(System):
 
 if __name__ == '__main__':
     # シミュレーション設定
-    T = 300 # 温度 [K]
-    end = 2.0e-9  # シミュレーションの終了時間 [秒]
+    T = 0 # 温度 [K]
+    end = 0.8e-9  # シミュレーションの終了時間 [秒]
     dt = 1e-12  # タイムステップ [秒]
-    alphaG = 0.015e0  # ギルバート減衰定数
+    alphaG = 0.010e0  # ギルバート減衰定数
     beta = -3e0  # field like torque と damping like torque の比
     theta = -0.25e0  # スピンホール角
     size = np.array([100e-9, 50e-9, 1e-9]) # [m] 強磁性体の寸法
@@ -407,13 +409,13 @@ if __name__ == '__main__':
 #    j0 = 2.64789e0 # alphaG = 0.01
 #    j0 = 3e0 # alphaG = 0.01
 #    j0 = 2.405e0 # alphaG = 0
-    j0 = 10e0
+    j0 = 6e0
 #    size = np.array([80e-9, 25e-9, 1e-9]) # [m] 強磁性体の寸法
 #    j0 = 6.35e0
 #    j0 = 7e0
     d_Pt = 5.0e-9  # Ptの厚み [m]
-#    M = 750e3  # 飽和磁化　[A/m]
-    M = 1500e3  # 飽和磁化　[A/m]
+    M = 750e3  # 飽和磁化　[A/m]
+#    M = 1500e3  # 飽和磁化　[A/m]
 
     H_appl = np.array([0e0, 0e0, 0e0])  # 外部磁場 [T]
     H_ani = np.array([0e0, 0e0, 0e0])  # 異方性定数 [T]
@@ -457,6 +459,7 @@ if __name__ == '__main__':
     c = 2e0*mp.ellipk(k)/(u*omega2)
 
     for i in range(system.steps):
+#        if True:
         if not(triger1) and system.energy_i(i) > 0e0+deltaE:
 #        if system.energy_i(i) > 0e0+0.002:
 #        if not(triger1) and system.t[i] > t0+5*system.dt:
